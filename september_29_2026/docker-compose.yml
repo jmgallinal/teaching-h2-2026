@@ -1,0 +1,24 @@
+services:
+  users-service:
+    build: ./users-service
+    ports:
+      - "5000:5000"
+
+  yesno-service:
+    build: ./yesno-service
+    ports:
+      - "5002:5002"
+
+  student-service:
+    build: ./student-service
+    ports:
+      - "5001:5001"
+    environment:
+      USERS_SERVICE_URL: "http://users-service:5000"
+      YESNO_URL: "http://yesno-service:5002/api"
+      FLASK_DEBUG: "1"
+    volumes:
+      - ./student-service:/app
+    depends_on:
+      - users-service
+      - yesno-service
