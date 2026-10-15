@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>WebSocket Client</title>
+</head>
+<body>
+  <h2>Demo WebSocket</h2>
+  <input id="inputMsg" type="text" placeholder="Write a message" />
+  <button onclick="sendMessage()">Send</button>
+
+  <ul id="messages"></ul>
+
+  <script>
+    const ws = new WebSocket('ws://localhost:8080');
+    const messages = document.getElementById('messages');
+
+    ws.onopen = () => {
+      console.log('Connected to WebSocket server');
+      addMessage('Connected to WebSocket server');
+    };
+
+    ws.onmessage = (event) => {
+      console.log('Message from server:', event.data);
+      addMessage(event.data);
+    };
+
+    ws.onerror = (event) => {
+      console.error('Error in WebSocket:', event);
+      addMessage('Error in connection');
+    };
+
+    ws.onclose = () => {
+      console.warn('Connection closed');
+      addMessage('Connection closed');
+    };
+
+    function sendMessage() {
+      const input = document.getElementById('inputMsg');
+      const msg = input.value.trim();
+      if (msg && ws.readyState === WebSocket.OPEN) {
+        console.log('Sending message to server:', msg);
+        ws.send(msg);
+        input.value = '';
+      } else {
+        console.warn('Could not send message');
+      }
+    }
+
+    function addMessage(msg) {
+      const li = document.createElement('li');
+      li.textContent = msg;
+      messages.appendChild(li);
+    }
+  </script>
+</body>
+</html>
